@@ -44,10 +44,18 @@ class SeenFortWorker(object):
                              player_latitude=f2i(self.position[0]),
                              player_longitude=f2i(self.position[1]))
         response_dict = self.api.call()
+        if 'responses' not in response_dict:
+                logger.log("[x] Pokestop response not found.")
+                return 11
+
         if 'responses' in response_dict and \
                 'FORT_SEARCH' in response_dict['responses']:
 
             spin_details = response_dict['responses']['FORT_SEARCH']
+            if 'result' not in spin_details:
+                logger.log("[x] Pokestop spin detail result not found.")
+                return 11
+
             if spin_details['result'] == 1:
                 logger.log("[+] Loot: ", 'green')
                 experience_awarded = spin_details.get('experience_awarded',
